@@ -1,10 +1,18 @@
 
-
-import React from 'react'
+import { Routes, Route } from 'react-router-dom'
+import Home from './pages/Home'
+import Chat from './pages/Chat'
+import Navbar from './components/Navbar'
 
 const App = () => {
   return (
-    <div>App</div>
+    <>
+      <Navbar />
+      <Routes>
+        <Route path='/' element={ <Home /> } />
+        <Route path='/chatroom/:id' element={ <Chat /> } />
+      </Routes>
+    </>
   )
 }
 
