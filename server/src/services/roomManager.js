@@ -9,41 +9,43 @@ const rooms = new Map();
 // └── messages[]
 
 
-export function createRoom (roomCode, createdByUser) {
+function createRoom (roomCode) {
     if (rooms.has(roomCode)) {
         throw new Error("Room already exists!");
     }
     rooms.set(roomCode, {
         roomCode,
         createdAt: new Date(),
-        users: [createdByUser],
+        users: [],
         messages: [],
     });
+    return roomCode;
 }
 
 
-export function getRoom (roomCode) {
+function getRoom (roomCode) {
     const room = rooms.get(roomCode);
     if (room)   return room;
     throw new Error(`The room with Id: ${roomCode} does not exists!`);
 }
 
-export function hasRoom (roomCode) {
+function hasRoom (roomCode) {
     return rooms.has(roomCode);
 }
 
-export function getAllRooms () {
+function getAllRooms () {
     return rooms;
 }
 
-export function addUser (user, roomCode) {
+function addUser (user, roomCode) {
     let room = rooms.get(roomCode);
-    if (!room)  return;
+    if (!room)  return false;
     room.users.push(user)
+    return true
     // rooms.set(roomCode, room);
 }
 
-export function removeUser (socketId, roomCode) {
+function removeUser (socketId, roomCode) {
     let room = rooms.get(roomCode);
     if (!room)  return;
     room.users = room.users.filter(user => user.socketId !== socketId);
@@ -52,10 +54,16 @@ export function removeUser (socketId, roomCode) {
     //     rooms.set(roomCode, room);
 }
 
-export function addMessage (message, roomCode) {
+function addMessage (message, roomCode, username, id) {
     let room = rooms.get(roomCode);
     if (!room)  return;
-    room.messages.push(message)
+    const msg = {
+        message,
+        sentAt: new Date(),
+        sentBy: username,
+        senderId: id
+    }
+    room.messages.push(msg);
     // rooms.set(roomCode, room);
 }
 
@@ -63,3 +71,5 @@ export function addMessage (message, roomCode) {
 //     const roomToDelete = rooms.get(roomCode);
 //     if (roomToDelete.users.length === 0)    rooms.delete(roomCode);
 // }
+
+module.exports = { rooms, createRoom, removeUser, addMessage,addUser, getRoom, hasRoom, getAllRooms, }
